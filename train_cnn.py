@@ -41,7 +41,8 @@ early_stop = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3, start_
 history = best_model.fit(train_ds,
                          epochs=Config.EPOCHS,
                          validation_data=val_ds,
-                         callbacks=[early_stop])
+                         callbacks=[early_stop],
+                         batch_size=32)
 best_model.save(Config.project_path  / 'models' / 'cnn')
 
 # Evaluate on Validation and Test set 
