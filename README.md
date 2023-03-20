@@ -35,3 +35,6 @@ Note: the librabry is not included in the enviroment as it's not necessay for ru
 https://neptune.ai/blog/image-classification-tips-and-tricks-from-13-kaggle-competitions
 
 https://machinelearningmastery.com/object-recognition-with-deep-learning/#:~:text=Image%20classification%20involves%20predicting%20the,more%20objects%20in%20an%20image. 
+
+to talk about tuning:
+https://towardsdatascience.com/a-guide-to-an-efficient-way-to-build-neural-network-architectures-part-ii-hyper-parameter-42efca01e5d7
