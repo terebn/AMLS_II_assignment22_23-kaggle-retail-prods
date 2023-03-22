@@ -2,6 +2,8 @@ from config import Config
 import pandas as pd
 import tensorflow as tf
 from tensorflow.keras import layers
+import gensim
+from nltk.corpus import stopwords
 
 
 def train_val_image_ds(data_path, save_ImgId=False):
@@ -38,9 +40,11 @@ def train_val_image_ds(data_path, save_ImgId=False):
     return train_ds, val_ds
 
 
-def get_image_text_label_id():
+def get_image_text_label_id(data_path):
 
-    train_ds, val_ds = train_val_image_ds(data_path=Config.data_path, save_ImgId=False)
+    train_ds, val_ds = train_val_image_ds(data_path=data_path, save_ImgId=False)
+
+    class_names = train_ds.class_names
 
     for images, labels in train_ds.take(1):
         train_images = images.numpy()
@@ -58,14 +62,15 @@ def get_image_text_label_id():
     df_train = df[df['ImgId'].isin(ImgId_train)]
     df_val = df[df['ImgId'].isin(ImgId_val)]
 
-    train_text  = df_train['title'] + df_train['description']
-    val_text = df_val['title'] + df_val['description']
+    train_text  = df_train['title'] + ' ' + df_train['description']
+    val_text = df_val['title'] + ' ' + df_val['description']
 
     train_ids = df_train['ImgId']
     val_ids = df_val['ImgId']
 
     return ({'labels':train_labels, 'images':train_images, 'text':train_text, 'ids':train_ids},
-            {'labels':val_labels, 'images':val_images, 'text':val_text, 'ids':val_ids})
+            {'labels':val_labels, 'images':val_images, 'text':val_text, 'ids':val_ids},
+            class_names)
 
 
 def prepare_ds(ds, shuffle=False, augment=False):
@@ -114,3 +119,12 @@ def prepare_ds(ds, shuffle=False, augment=False):
 
     # Use buffered prefetching on all datasets.
     return ds.prefetch(buffer_size=AUTOTUNE)
+
+
+def get_token(description):
+    stop_english=set(stopwords.words('english'))
+    
+    token = list(gensim.utils.tokenize(description))
+    token = [i for i in token if(len(i) > 2)]
+    token = [s for s in token if s not in stop_english]
+    return token
