@@ -141,7 +141,7 @@ def plot_sample_image_and_top_categories(ds, model, class_names):
         class_predicted = np.argsort(predictions)[::-1][:3]
         category_predicted = [get_category(class_label=int(c)) for c in class_predicted]
         predicted_prob = np.sort(predictions)[::-1][:3]
-\
+
         for j in range(2):
             if (j%2) == 0:
                 ax = plt.Subplot(fig, inner[j])

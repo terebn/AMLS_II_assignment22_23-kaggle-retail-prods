@@ -13,7 +13,7 @@ class CNNClassifier:
 
     def build_model(self, hp):
         model = keras.Sequential(
-           layers.Rescaling(1./255, input_shape=(Config.IMG_HEIGHT, Config.IMG_WIDTH, 3) )
+#           layers.Rescaling(1./255, input_shape=(Config.IMG_HEIGHT, Config.IMG_WIDTH, 3) )
         )
 
         model.add(layers.Conv2D(
@@ -29,6 +29,9 @@ class CNNClassifier:
         model.add(layers.MaxPooling2D(pool_size=(2, 2)))
 
         model.add(layers.Conv2D(filters=256, kernel_size=(3, 3), activation='relu'))
+        model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+
+        model.add(layers.Conv2D(filters=512, kernel_size=(3, 3), activation='relu'))
         model.add(layers.MaxPooling2D(pool_size=(2, 2)))
 
         model.add(layers.Flatten())
