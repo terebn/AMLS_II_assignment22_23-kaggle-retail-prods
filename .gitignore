@@ -1,9 +1,10 @@
-# data directory
+# data and intermediate output directories
 retail-products-classification
 datasets
 out
 hp-tuning
 models
+retail-products-classification.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
