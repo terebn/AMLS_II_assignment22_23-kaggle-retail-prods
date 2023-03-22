@@ -2,6 +2,8 @@
 retail-products-classification
 datasets
 out
+hp-tuning
+models
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
