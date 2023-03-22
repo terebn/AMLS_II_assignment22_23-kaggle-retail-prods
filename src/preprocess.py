@@ -1,5 +1,6 @@
 from config import Config
 import pandas as pd
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers
 import gensim
@@ -40,19 +41,17 @@ def train_val_image_ds(data_path, save_ImgId=False):
     return train_ds, val_ds
 
 
-def get_image_text_label_id(data_path):
+def get_image_text_label_id():
 
-    train_ds, val_ds = train_val_image_ds(data_path=data_path, save_ImgId=False)
+    train_ds, val_ds = train_val_image_ds(data_path=Config.data_path, save_ImgId=False)
 
     class_names = train_ds.class_names
 
-    for images, labels in train_ds.take(1):
-        train_images = images.numpy()
-        train_labels = labels.numpy()
+    train_labels = np.concatenate([y for x, y in train_ds], axis=0)
+    train_images = np.concatenate([x for x, y in train_ds], axis=0)
 
-    for images, labels in val_ds.take(1):
-        val_images = images.numpy()
-        val_labels = labels.numpy()
+    val_images = np.concatenate([y for x, y in val_ds], axis=0)
+    val_labels = np.concatenate([x for x, y in val_ds], axis=0)
 
     ImgId_train = [p.split('/')[-1].replace('.jpg', '') for p in train_ds.file_paths]
     ImgId_val = [p.split('/')[-1].replace('.jpg', '') for p in val_ds.file_paths]
@@ -65,11 +64,14 @@ def get_image_text_label_id(data_path):
     train_text  = df_train['title'] + ' ' + df_train['description']
     val_text = df_val['title'] + ' ' + df_val['description']
 
+    train_text = train_text.where(pd.notnull(train_text), 'none')
+    val_text = val_text.where(pd.notnull(val_text), 'none')
+
     train_ids = df_train['ImgId']
     val_ids = df_val['ImgId']
 
-    return ({'labels':train_labels, 'images':train_images, 'text':train_text, 'ids':train_ids},
-            {'labels':val_labels, 'images':val_images, 'text':val_text, 'ids':val_ids},
+    return ({'labels':train_labels, 'images':train_images, 'text':train_text.to_numpy(), 'ids':train_ids.to_numpy()},
+            {'labels':val_labels, 'images':val_images, 'text':val_text.to_numpy(), 'ids':val_ids.to_numpy()},
             class_names)
 
 
@@ -128,3 +130,4 @@ def get_token(description):
     token = [i for i in token if(len(i) > 2)]
     token = [s for s in token if s not in stop_english]
     return token
+
