@@ -14,14 +14,15 @@ class Config():
     VALIDATION_PROP = 0.2
     IMG_HEIGHT = 100
     IMG_WIDTH = 100
+    BATCH_SIZE = 32
 
     # CNN
 
     # Tuning
-    MAX_EPOCHS_HP = 100  # the maximum number of epochs to train one model. It is recommended to set this to a value slightly higher than the expected epochs to convergence for your largest Model FACTOR = 3  # the reduction factor for the number of epochs and number of models for each
+    MAX_EPOCHS_HP = 50  # the maximum number of epochs to train one model. It is recommended to set this to a value slightly higher than the expected epochs to convergence for your largest Model FACTOR = 3  # the reduction factor for the number of epochs and number of models for each
     HYPERBAND_ITERATIONS = 1  # the number of times to iterate over the full Hyperband algorithm
     FACTOR = 3
-    SUFFIX = '_100'
+    SUFFIX = '_augm'
 
     # Fitting
     EPOCHS = 30
