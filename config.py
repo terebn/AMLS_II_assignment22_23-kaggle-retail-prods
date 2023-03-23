@@ -25,7 +25,7 @@ class Config():
     SUFFIX = '_augm'
 
     # Fitting
-    EPOCHS = 30
+    EPOCHS = 100
 
     @staticmethod
     def get_labels_map():

@@ -15,6 +15,7 @@ def train_val_image_ds(data_path, save_ImgId=False):
         label_mode='categorical',
         validation_split=Config.VALIDATION_PROP,
         subset="training",
+        batch_size=Config.BATCH_SIZE,
         seed=123,
         image_size=(Config.IMG_HEIGHT, Config.IMG_WIDTH))
     
@@ -24,6 +25,7 @@ def train_val_image_ds(data_path, save_ImgId=False):
         label_mode='categorical',
         validation_split=Config.VALIDATION_PROP,
         subset="validation",
+        batch_size=Config.BATCH_SIZE,
         seed=123,
         image_size=(Config.IMG_HEIGHT, Config.IMG_WIDTH))
     
@@ -101,7 +103,7 @@ def prepare_ds(ds, shuffle=False, augment=False):
     # Resize and rescale all datasets.
     ds = ds.map(lambda x, y: (resize_and_rescale(x), y), 
                 num_parallel_calls=AUTOTUNE)
-
+    
     # Shuffle only training data
     if shuffle:
         ds = ds.shuffle(1000)
@@ -115,9 +117,6 @@ def prepare_ds(ds, shuffle=False, augment=False):
     if augment:
         ds = ds.map(lambda x, y: (data_augmentation(x, training=True), y), 
                     num_parallel_calls=AUTOTUNE)
-
-    # Batch all datasets.
-    ds = ds.batch(Config.BATCH_SIZE)
 
     # Use buffered prefetching on all datasets.
     return ds.prefetch(buffer_size=AUTOTUNE)

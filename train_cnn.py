@@ -24,11 +24,11 @@ plt.savefig(out_path / f'sample_train_images{Config.SUFFIX}.png')
 
 # CNN
 
-train_ds = prepare_ds(train_ds, shuffle=True, augment=True)
-val_ds = prepare_ds(val_ds)
+train_ds_preprocessed = prepare_ds(train_ds, shuffle=True, augment=True)
+val_ds_preprocessed = prepare_ds(val_ds)
 
 num_classes = len(class_names)
-cnn = CNNClassifier(train_ds=train_ds, val_ds=val_ds, num_classes=num_classes)
+cnn = CNNClassifier(train_ds=train_ds_preprocessed, val_ds=val_ds_preprocessed, num_classes=num_classes)
 
 # Hyperparam tuning
 best_model = cnn.hyperparameter_tuning()
@@ -38,9 +38,9 @@ print(best_model.summary())
 # Fit model with best params
 early_stop = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3, start_from_epoch=5)
 
-history = best_model.fit(train_ds,
+history = best_model.fit(train_ds_preprocessed,
                          epochs=Config.EPOCHS,
-                         validation_data=val_ds,
+                         validation_data=val_ds_preprocessed,
                          callbacks=[early_stop],
                          batch_size=32)
 best_model.save(Config.project_path  / 'models' / f'cnn{Config.SUFFIX}')
@@ -49,11 +49,11 @@ best_model.save(Config.project_path  / 'models' / f'cnn{Config.SUFFIX}')
 fig_acc_loss = plot_acc_loss(history=history, n_epochs=Config.EPOCHS)
 plt.savefig(out_path / f'acc_loss{Config.SUFFIX}.png')
 
-print(f"Train set evaluation: {evaluate(model=best_model, ds=train_ds)}")
-print(f"Validation set evaluation: {evaluate(model=best_model, ds=val_ds)}")
+print(f"Train set evaluation: {evaluate(model=best_model, ds=train_ds_preprocessed)}")
+print(f"Validation set evaluation: {evaluate(model=best_model, ds=val_ds_preprocessed)}")
 
 # Val set prediction and prob 
-val_df = predict_and_compare(model=best_model, ds=val_ds)
+val_df = predict_and_compare(model=best_model, ds=val_ds_preprocessed)
 val_df.to_parquet(out_path / f'val_preds{Config.SUFFIX}.pq')
 
 # Accuracy by category
