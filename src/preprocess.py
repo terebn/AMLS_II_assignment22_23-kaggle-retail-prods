@@ -5,10 +5,22 @@ import tensorflow as tf
 from tensorflow.keras import layers
 import gensim
 from nltk.corpus import stopwords
+import pandas as pd
 
+def train_val_image_ds(data_path):
+    """
+    Returns two TensorFlow datasets: one for training and one for validation. The datasets are created using the 
+    images in the 'train' subdirectory of the given 'data_path' directory, which should be organized into subdirectories 
+    for each class. The datasets are split into training and validation sets according to the 'validation_split' 
+    parameter in the Config object. The datasets are batched using the 'BATCH_SIZE' parameter in the Config object and 
+    resized to the height and width specified in the Config object.
 
-def train_val_image_ds(data_path, save_ImgId=False):
+    Parameters:
+    - data_path (str or pathlib.Path): the directory containing the image data
 
+    Returns:
+    - train_ds, val_ds (tuple of tensorflow.data.Dataset): the training and validation datasets, respectively
+    """
     train_ds = tf.keras.preprocessing.image_dataset_from_directory(
         data_path / 'train',
         labels='inferred',
@@ -29,52 +41,34 @@ def train_val_image_ds(data_path, save_ImgId=False):
         seed=123,
         image_size=(Config.IMG_HEIGHT, Config.IMG_WIDTH))
     
-    if save_ImgId:
-
-        ImgId_val = [p.split('/')[-1].replace('.jpg', '') for p in val_ds.file_paths]
-        ImgId_train = [p.split('/')[-1].replace('.jpg', '') for p in train_ds.file_paths]
-
-        ImgId_val = pd.DataFrame(ImgId_val, columns=["ImgId"])
-        ImgId_val.to_csv(Config.out_path / 'ImgId_val.csv', index=False)
-
-        ImgId_train = pd.DataFrame(ImgId_train, columns=["ImgId"])
-        ImgId_train.to_csv(Config.out_path / 'ImgId_train.csv', index=False)
-    
     return train_ds, val_ds
 
 
-def get_image_text_label_id():
+def get_text_from_image_ds(train_ds, val_ds):
+    """
+    Given two TensorFlow datasets representing image data for training and validation, extracts the corresponding text 
+    descriptions from a Parquet file containing the text data. The text descriptions are combined from the 'title' and 
+    'description' columns of the Parquet file, and are returned along with their corresponding labels and image IDs.
 
-    train_ds, val_ds = train_val_image_ds(data_path=Config.data_path, save_ImgId=False)
+    Parameters:
+    - train_ds (tensorflow.data.Dataset): the training dataset of images
+    - val_ds (tensorflow.data.Dataset): the validation dataset of images
 
-    class_names = train_ds.class_names
-
-    train_labels = np.concatenate([y for x, y in train_ds], axis=0)
-    train_images = np.concatenate([x for x, y in train_ds], axis=0)
-
-    val_images = np.concatenate([y for x, y in val_ds], axis=0)
-    val_labels = np.concatenate([x for x, y in val_ds], axis=0)
+    Returns:
+    - train_text, val_text (tuple of pandas.DataFrame): the text descriptions, labels, and image IDs for the training 
+      and validation datasets, respectively. Each DataFrame has columns for 'label', 'text', and 'ImgId'.
+    """
+    # get text description
+    df = pd.read_parquet(Config.data_path / 'train.pq')
+    df['text'] = np.where((df['title'] + ' ' + df['description']).isna(), 'none', (df['title'] + ' ' + df['description']))
 
     ImgId_train = [p.split('/')[-1].replace('.jpg', '') for p in train_ds.file_paths]
     ImgId_val = [p.split('/')[-1].replace('.jpg', '') for p in val_ds.file_paths]
 
-    df = pd.read_parquet(Config.data_path / 'train.pq')
+    train_text = pd.DataFrame(ImgId_train, columns=['ImgId']).merge(df[['label', 'text', 'ImgId']], on='ImgId')
+    val_text = pd.DataFrame(ImgId_val, columns=['ImgId']).merge(df[['label', 'text', 'ImgId']], on='ImgId')
 
-    df_train = df[df['ImgId'].isin(ImgId_train)]
-    df_val = df[df['ImgId'].isin(ImgId_val)]
-
-    train_text  = df_train['title'] + ' ' + df_train['description']
-    val_text = df_val['title'] + ' ' + df_val['description']
-
-    train_text = train_text.where(pd.notnull(train_text), 'none')
-    val_text = val_text.where(pd.notnull(val_text), 'none')
-
-    train_ids = df_train['ImgId']
-    val_ids = df_val['ImgId']
-
-    return ({'labels':train_labels, 'images':train_images, 'text':train_text.to_numpy(), 'ids':train_ids.to_numpy()},
-            {'labels':val_labels, 'images':val_images, 'text':val_text.to_numpy(), 'ids':val_ids.to_numpy()},
-            class_names)
+    return train_text, val_text
 
 
 def prepare_ds(ds, shuffle=False, augment=False):
@@ -91,7 +85,6 @@ def prepare_ds(ds, shuffle=False, augment=False):
         The preprocessed TensorFlow dataset ready for training a CNN. The dataset has been resized
         and rescaled, shuffled (if shuffle=True), and augmented (if augment=True) for training. The
         dataset has also been batched and prefetched for optimal performance.
-
     """
     AUTOTUNE = tf.data.AUTOTUNE
 
@@ -120,13 +113,3 @@ def prepare_ds(ds, shuffle=False, augment=False):
 
     # Use buffered prefetching on all datasets.
     return ds.prefetch(buffer_size=AUTOTUNE)
-
-
-def get_token(description):
-    stop_english=set(stopwords.words('english'))
-    
-    token = list(gensim.utils.tokenize(description))
-    token = [i for i in token if(len(i) > 2)]
-    token = [s for s in token if s not in stop_english]
-    return token
-
