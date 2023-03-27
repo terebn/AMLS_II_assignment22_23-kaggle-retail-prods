@@ -9,8 +9,9 @@ from transformers import (
     )
 from tensorflow.keras.optimizers import Adam
 from src.preprocess import train_val_image_ds, get_text_from_image_ds
-from src.helpers import (plot_images, plot_acc_loss, evaluate, predict_and_compare,
-                         accuracy_by_category, plot_sample_image_and_top_categories)
+from src.helpers import (plot_acc_loss, evaluate,
+                         plot_sample_image_and_top_categories)
+from src.evaluate import predict_and_compare, accuracy_by_category
 
 from config import Config
 
