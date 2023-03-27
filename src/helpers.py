@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+
 from config import Config
 
 
@@ -60,34 +61,6 @@ def evaluate(model, ds):
     score = model.evaluate(ds, verbose=0)
     print('Loss:', score[0])
     print('Accuracy:', score[1])
-
-
-def predict_and_compare(model, ds) -> pd.DataFrame():
-
-    # predictions
-    predictions = model.predict(ds)
-    label_pred = np.argmax(predictions, axis=1)
-    category_pred = [get_category(class_label=l) for l in label_pred]
-    predicted_prob = np.max(predictions, axis=1)
-
-    # true labels
-    label = np.argmax(np.concatenate([y for x, y in ds], axis=0), axis=1)
-    category = [get_category(class_label=l) for l in label]
-
-    # df
-    pred_df = pd.DataFrame({'label':label, 'category':category,
-                            'label_pred':label_pred, 'category_pred':category_pred,
-                            'label_prob':predicted_prob})
-
-    return pred_df
-
-
-def accuracy_by_category(preds_df):
-
-    acc_by_label = preds_df[preds_df['label']==preds_df['label_pred']].groupby('label').size() / preds_df.groupby('label').size()
-    acc_by_label = acc_by_label.reset_index().rename(columns={0:'accuracy'})
-    acc_by_label['categories'] = acc_by_label['label'].apply(lambda x : get_category(x))
-    return acc_by_label
 
 
 def plot_random_image_and_top_categories(ds, model, class_names):
