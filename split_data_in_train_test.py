@@ -6,6 +6,8 @@ import pandas as pd
 
 
 data_path = Config.data_path
+data_path.mkdir(parents=True, exist_ok=True)
+
 competition_raw_data_path = data_path / 'retail-products-classification' 
 
 image_dir = competition_raw_data_path / 'train' / 'train'
