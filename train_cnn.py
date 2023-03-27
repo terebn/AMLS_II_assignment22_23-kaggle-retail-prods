@@ -2,10 +2,11 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 from config import Config
-from src.helpers import (plot_images, plot_acc_loss, evaluate, predict_and_compare,
-                         accuracy_by_category, plot_sample_image_and_top_categories)
+from src.helpers import (plot_images, plot_acc_loss, evaluate,
+                         plot_sample_image_and_top_categories)
 from src.CNNClassifier import CNNClassifier
 from src.preprocess import train_val_image_ds, prepare_ds
+from src.evaluate import accuracy_by_category, predict_and_compare
 
 
 # Set paths
@@ -13,9 +14,8 @@ data_path = Config.data_path
 out_path = Config.out_path
 model_path = Config.model_path
 
-
 # Get train and val data
-train_ds, val_ds = train_val_image_ds(data_path=data_path, save_ImgId=False)
+train_ds, val_ds = train_val_image_ds(data_path=data_path)
 class_names = train_ds.class_names
 
 # Plot some images
@@ -32,7 +32,6 @@ cnn = CNNClassifier(train_ds=train_ds_preprocessed, val_ds=val_ds_preprocessed, 
 
 # Hyperparam tuning
 best_model = cnn.hyperparameter_tuning()
-
 print(best_model.summary())
 
 # Fit model with best params
@@ -43,7 +42,7 @@ history = best_model.fit(train_ds_preprocessed,
                          validation_data=val_ds_preprocessed,
                          callbacks=[early_stop],
                          batch_size=32)
-best_model.save(Config.project_path  / 'models' / f'cnn{Config.SUFFIX}')
+best_model.save(model_path / f'cnn{Config.SUFFIX}')
 
 # Evaluate on Validation and Test set 
 fig_acc_loss = plot_acc_loss(history=history, n_epochs=Config.EPOCHS)
