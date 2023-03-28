@@ -36,10 +36,10 @@ test_ds_images = tf.keras.preprocessing.image_dataset_from_directory(
     image_size=(Config.IMG_HEIGHT, Config.IMG_WIDTH))
 
 ImgId_test = [p.split('/')[-1].replace('.jpg', '') for p in test_ds_images.file_paths]
-train_text_df = pd.DataFrame(ImgId_test, columns=['ImgId']).merge(test_df[['label', 'text', 'ImgId']], on='ImgId')
+test_text_df = pd.DataFrame(ImgId_test, columns=['ImgId']).merge(test_df[['label', 'text', 'ImgId']], on='ImgId')
 
 # text Test df into Dataset
-test_ds = Dataset.from_pandas(train_text_df)
+test_ds = Dataset.from_pandas(test_text_df)
 
 # tokenize
 MODEL_NAME = 'distilbert-base-uncased'

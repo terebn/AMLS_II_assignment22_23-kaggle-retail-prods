@@ -23,9 +23,9 @@ out_path = Config.out_path
 model_path = Config.model_path
 
 # Get train and val data 
-train_ds, val_ds = train_val_image_ds(data_path)
-n_classes = len(train_ds.class_names)
-train_text_df, val_text_df = get_text_from_image_ds(train_ds, val_ds)
+train_image_ds, val_image_ds = train_val_image_ds(data_path)
+n_classes = len(train_image_ds.class_names)
+train_text_df, val_text_df = get_text_from_image_ds(train_image_ds, val_image_ds)
 
 # Prepare data 
 train_ds = Dataset.from_pandas(train_text_df)
