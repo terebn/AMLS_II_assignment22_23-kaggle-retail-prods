@@ -6,25 +6,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def predict_and_compare(model, ds) -> pd.DataFrame():
-
-    # predictions
-    predictions = model.predict(ds)
-    label_pred = np.argmax(predictions, axis=1)
-    category_pred = [get_category(class_label=l) for l in label_pred]
-    predicted_prob = np.max(predictions, axis=1)
-
-    # true labels
-    label = np.argmax(np.concatenate([y for x, y in ds], axis=0), axis=1)
-    category = [get_category(class_label=l) for l in label]
-
-    # df
-    pred_df = pd.DataFrame({'label':label, 'category':category,
-                            'label_pred':label_pred, 'category_pred':category_pred,
-                            'label_prob':predicted_prob})
-
-    return pred_df
-
 
 def accuracy_by_category(preds_df):
 
