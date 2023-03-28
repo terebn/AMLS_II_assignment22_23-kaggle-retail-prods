@@ -26,8 +26,22 @@ model = TFAutoModelForSequenceClassification.from_pretrained(model_path / "disti
 test_df = pd.read_parquet(data_path / 'test.pq')
 test_df['text'] = np.where((test_df['title'] + ' ' + test_df['description']).isna(), 'none', (test_df['title'] + ' ' + test_df['description']))
 
-test_ds = Dataset.from_pandas(test_df)
+# load the test images to make sure we only use those
+test_ds_images = tf.keras.preprocessing.image_dataset_from_directory(
+    Config.data_path / 'test',
+    labels='inferred',
+    label_mode='categorical',
+    batch_size=Config.BATCH_SIZE,
+    seed=123,
+    image_size=(Config.IMG_HEIGHT, Config.IMG_WIDTH))
 
+ImgId_test = [p.split('/')[-1].replace('.jpg', '') for p in test_ds_images.file_paths]
+train_text_df = pd.DataFrame(ImgId_test, columns=['ImgId']).merge(test_df[['label', 'text', 'ImgId']], on='ImgId')
+
+# text Test df into Dataset
+test_ds = Dataset.from_pandas(train_text_df)
+
+# tokenize
 MODEL_NAME = 'distilbert-base-uncased'
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
