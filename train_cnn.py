@@ -52,7 +52,10 @@ print(f"Train set evaluation: {evaluate(model=best_model, ds=train_ds_preprocess
 print(f"Validation set evaluation: {evaluate(model=best_model, ds=val_ds_preprocessed)}")
 
 # Val set prediction and prob 
-val_df = predict_and_compare(model=best_model, ds=val_ds_preprocessed)
+val_df = predict_and_compare(model=best_model,
+                             ds=val_ds_preprocessed,
+                             predictions=None,
+                             is_image_data=True)
 val_df.to_parquet(out_path / f'val_preds{Config.SUFFIX}.pq')
 
 # Accuracy by category
