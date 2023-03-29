@@ -31,7 +31,11 @@ plot_model(cnn_aumg_model, to_file=out_path / 'cnn_aumg_model.png',
 visualkeras.layered_view(cnn_aumg_model, legend=True,  to_file=out_path / 'cnn_aumg_model_flow.png')
 
 # get results
-res = run_evaluation(model=cnn_aumg_model, ds_preprocessed=test_ds_preprocessed, beta=3)
+res = run_evaluation(model=cnn_aumg_model,
+                     ds_preprocessed=test_ds_preprocessed,
+                     beta=3,
+                     predictions=None,
+                     is_image_data=True)
 
 res['predictions_df'].to_csv(out_path / f'test_predictions{Config.SUFFIX}.csv', index=False)
 res['acc_by_category'].to_csv(out_path / f'test_accuracy_by_category{Config.SUFFIX}.csv', index=False)

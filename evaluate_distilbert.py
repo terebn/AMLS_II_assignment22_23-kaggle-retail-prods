@@ -63,7 +63,11 @@ model.compile(
 )
 
 # get results
-res = run_evaluation(model, tf_dataset_test, beta=3, predictions=y_probs)
+res = run_evaluation(model,
+                     tf_dataset_test,
+                     beta=3,
+                     predictions=y_probs,
+                     is_image_data=False)
 
 res['predictions_df'].to_csv(out_path / f'test_predictions_{Config.BERT_SUFFIX}.csv', index=False)
 res['acc_by_category'].to_csv(out_path / f'test_accuracy_by_category_{Config.BERT_SUFFIX}.csv', index=False)
