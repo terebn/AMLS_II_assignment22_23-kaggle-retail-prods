@@ -5,11 +5,19 @@ import os
 import pandas as pd
 
 
+# make directories
 data_path = Config.data_path
+out_path = Config.out_path
+model_path = Config.model_path
+hp_tuning_path = Config.hp_tuning_path
+
 data_path.mkdir(parents=True, exist_ok=True)
+model_path.mkdir(parents=True, exist_ok=True)
+hp_tuning_path.mkdir(parents=True, exist_ok=True)
+out_path.mkdir(parents=True, exist_ok=True)
 
+# Data from kaggle
 competition_raw_data_path = data_path / 'retail-products-classification' 
-
 image_dir = competition_raw_data_path / 'train' / 'train'
 csv_file = competition_raw_data_path / 'train.csv'
 
