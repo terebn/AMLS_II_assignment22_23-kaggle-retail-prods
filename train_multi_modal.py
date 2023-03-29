@@ -93,17 +93,25 @@ text_val_preds = predict_and_compare(distilbert_model,
                                      is_image_data=False)
 
 # combine text and image predictions for Train set
-text_train_df = pd.concat([train_text_df[['ImgId', 'label']],
-                           text_train_preds.add_suffix('_text')], axis=1)
+df_train = pd.concat([train_text_df[['ImgId', 'label']],
+                           text_train_preds.add_suffix('_text'),
+                           image_train_preds.add_suffix('_image')], axis=1)
 
-df = text_train_df.merge(image_train_preds.add_suffix('_image'), left_on=['ImgId', 'label'], right_on=['ImgId_image', 'label_image'])
-df.to_parquet(out_path / 'train_preds_text_image.pq')
+# text_train_df = pd.concat([train_text_df[['ImgId', 'label']],
+#                            text_train_preds.add_suffix('_text')], axis=1)
+
+# df_train = text_train_df.merge(image_train_preds.add_suffix('_image'), left_on=['ImgId', 'label'], right_on=['ImgId_image', 'label_image'])
+df_train.to_parquet(out_path / 'train_preds_text_image.pq')
 
 # combine text and image predictions for Val set
-text_val_df = pd.concat([val_text_df[['ImgId', 'label']],
-                         text_val_preds.add_suffix('_text')], axis=1)
+df_val = pd.concat([val_text_df[['ImgId', 'label']],
+                         text_val_preds.add_suffix('_text'),
+                         image_val_preds.add_suffix('_image')], axis=1)
 
-df_val = text_val_df.merge(image_val_preds.add_suffix('_image'), left_on=['ImgId', 'label'], right_on=['ImgId_image', 'label_image'])
+# text_val_df = pd.concat([val_text_df[['ImgId', 'label']],
+#                          text_val_preds.add_suffix('_text')], axis=1)
+
+# df_val = text_val_df.merge(image_val_preds.add_suffix('_image'), left_on=['ImgId', 'label'], right_on=['ImgId_image', 'label_image'])
 df_val.to_parquet(out_path / 'val_preds_text_image.pq')
 
 # fit a MLP
@@ -123,5 +131,5 @@ def fit_MLPClassifier(df, df_val):
         'val_accuracy':clf.score(X_val, y_val),
     }, index=[0])
 
-mlp_accuracy = fit_MLPClassifier(df, df_val)
+mlp_accuracy = fit_MLPClassifier(df_train, df_val)
 mlp_accuracy.to_csv(out_path / f'mlp_accuracy.csv', index=False)
