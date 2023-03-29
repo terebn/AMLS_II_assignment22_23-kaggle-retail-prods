@@ -77,6 +77,7 @@ pure-eval @ file:///home/conda/feedstock_root/build_artifacts/pure_eval_16428759
 pyarrow==11.0.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
+pydot==1.4.2
 Pygments @ file:///home/conda/feedstock_root/build_artifacts/pygments_1672682006896/work
 pyparsing==3.0.9
 python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/python-dateutil_1626286286081/work
