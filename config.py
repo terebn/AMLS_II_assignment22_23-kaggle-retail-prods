@@ -22,9 +22,9 @@ class Config():
     MAX_EPOCHS_HP = 50  # the maximum number of epochs to train one model. It is recommended to set this to a value slightly higher than the expected epochs to convergence for your largest Model FACTOR = 3  # the reduction factor for the number of epochs and number of models for each
     HYPERBAND_ITERATIONS = 1  # the number of times to iterate over the full Hyperband algorithm
     FACTOR = 3
-    SUFFIX = '_augm'
+    SUFFIX = '_augm50'
     # Fitting
-    EPOCHS = 100
+    EPOCHS = 50
 
     # BERT
 
