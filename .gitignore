@@ -1,9 +1,12 @@
-# data directory
+# data and intermediate output directories
 retail-products-classification
-datasets
+retail-products-classification.zip
+!dataset/labels.csv
+dataset
 out
 hp-tuning
 models
+notebooks
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
