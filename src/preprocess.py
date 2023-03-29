@@ -21,9 +21,10 @@ def train_val_image_ds(data_path):
     Returns:
     - train_ds, val_ds (tuple of tensorflow.data.Dataset): the training and validation datasets, respectively
     """
-    train_ds = tf.keras.preprocessing.image_dataset_from_directory(
+    train_ds = tf.keras.utils.image_dataset_from_directory(
         data_path / 'train',
         labels='inferred',
+        class_names=[f"{x}" for x in range(21)],
         label_mode='categorical',
         validation_split=Config.VALIDATION_PROP,
         subset="training",
@@ -31,9 +32,10 @@ def train_val_image_ds(data_path):
         seed=123,
         image_size=(Config.IMG_HEIGHT, Config.IMG_WIDTH))
     
-    val_ds = tf.keras.preprocessing.image_dataset_from_directory(
+    val_ds = tf.keras.utils.image_dataset_from_directory(
         data_path / 'train',
         labels='inferred',
+        class_names=[f"{x}" for x in range(21)],
         label_mode='categorical',
         validation_split=Config.VALIDATION_PROP,
         subset="validation",

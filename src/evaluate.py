@@ -37,20 +37,24 @@ def evaluate_model(model, ds):
     return loss, accuracy
 
 
-def predict_and_compare(model, ds, predictions=None) -> pd.DataFrame():
+def predict_and_compare(model, ds, predictions=None, is_image_data=False) -> pd.DataFrame():
 
     # predictions
     if predictions is None:
         predictions = model.predict(ds)
+
+    # predicted label
     label_pred = np.argmax(predictions, axis=1)
+
     category_pred = [get_category(class_label=l) for l in label_pred]
     predicted_prob = np.max(predictions, axis=1)
 
     # true labels
-    try:
+    if is_image_data:
         label = np.argmax(np.concatenate([y for x, y in ds], axis=0), axis=1)
-    except:
+    else:
         label = np.concatenate([y for x, y in ds], axis=0)
+
     category = [get_category(class_label=l) for l in label]
 
     # df
@@ -63,10 +67,10 @@ def predict_and_compare(model, ds, predictions=None) -> pd.DataFrame():
     return pred_df
 
 
-def run_evaluation(model, ds_preprocessed, beta, predictions=None):
+def run_evaluation(model, ds_preprocessed, beta, predictions=None, is_image_data=False):
 
     loss, accuracy = evaluate_model(model, ds_preprocessed)
-    df = predict_and_compare(model=model, ds=ds_preprocessed, predictions=predictions)
+    df = predict_and_compare(model=model, ds=ds_preprocessed, predictions=predictions, is_image_data=is_image_data)
     acc_by_category = accuracy_by_category(preds_df=df)
 
     y_true = df['category']
