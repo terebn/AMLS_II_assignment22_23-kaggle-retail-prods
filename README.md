@@ -13,6 +13,8 @@ Inside `src` there's also a `modules` directory. This contains the functions tha
 * `helpers.py`: mostly plot ad utils functions 
 * `CNNClassifier.py`: a python class for tuning and training the CNN
 
+Finally, the `config.py` file has all the paramters used in the models.
+
 ## Set up
 
 ### 1. Set up the enviroment
