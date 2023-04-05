@@ -4,7 +4,10 @@ This repo has the code for the [Kaggle Retail Products Classification Challenge]
 
 ## How the code is organised
 
-The `src` directory contains all the code for the project. Inside, there are `.py` scripts for training and evaluating three models. Each script starts with the letter of the corresponding task: `A_` is for the CNN, `B_` is for DistilBERT and `C_` is for the MLP.
+The `src` directory contains all the code for the project. Inside, there are `.py` scripts for training and evaluating three models. Each script starts with the letter of the corresponding task: 
+* `A_` is for the CNN
+* `B_` is for DistilBERT 
+* `C_` is for the MLP
 
 Inside `src` there's also a `modules` directory. This contains the functions that are used across the three Tasks. They are divided into:
 
@@ -29,21 +32,24 @@ Following the set up of this enviroment using conda you can use pip to install t
 
 ### 2. Download the data from Kaggle and unzip it in `dataset`
 
-The dataset can be downloaded form [this link](https://www.kaggle.com/competitions/retail-products-classification/data). If you click 'Download all', you will download a zipped folder. Just unzip it in `dataset` (keep the original name 'retail-product-classification').
+The dataset can be downloaded form [this link](https://www.kaggle.com/competitions/retail-products-classification/data). If you click 'Download all', you will download a zipped folder with the data. Just unzip it in `dataset` (keep the original name, 'retail-product-classification').
 
 ### 3. Create the Train, Test and Validate datasets
 
-From the console, run `split_data_in_train_test.py` to create the Train, Validation and Test sets from the unzipped `retail-product-classification` directory.
-
-This also creates the sub-directories for `out`, which is where all outputs are stored, `models`, where model artefacts are saved, and `hp-tuning`, where the hyper-parameter tuning artefacts are saved.
+From the console, run `split_data_in_train_test.py` to create the Train, Validation and Test sets from the unzipped `retail-product-classification` directory:
 
 ```sh
 python3 split_data_in_train_test.py
 ```
 
+This also creates the sub-directories for:
+* `out`, where all plots and tables are saved
+* `models`, where model artefacts are saved
+* `hp-tuning`, where the hyper-parameter tuning artefacts are saved
+
 ### 4. Run the whole routine
 
-Now that you have everything set up, to run all the Tasks in order, you can launch the `main.sh` file:
+Now that you have everything set up, to run all the tasks in order, you can launch the `main.sh` file:
 
 ```sh
 ./main.sh
@@ -51,7 +57,7 @@ Now that you have everything set up, to run all the Tasks in order, you can laun
 
 ## Requirements
 
-Nonwitstanding what said above for the creation of the enviroment, here's a list of required packages:
+Notwitstanding what said above for the creation of the enviroment, here's a list of required packages:
 
 * pandas==1.5.3
 * scikit-learn==1.2.2
